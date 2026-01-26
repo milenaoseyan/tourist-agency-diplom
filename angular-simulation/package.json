@@ -1,0 +1,16 @@
+{
+"name": "tourist-agency-angular",
+"version": "1.0.0",
+"description": "Туристическое агентство - дипломный проект",
+"scripts": {
+    "start": "echo 'Запуск Angular приложения' && python -m http.server 8080",
+    "build": "echo 'Сборка проекта'",
+    "test": "echo 'Тестирование'"
+},
+"dependencies": {
+    "angular": "Имитация Angular проекта",
+    "typescript": "Имитация TypeScript"
+},
+"author": "Ваше Имя",
+"license": "MIT"
+}
