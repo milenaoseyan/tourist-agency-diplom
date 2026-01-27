@@ -5,10 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TravelWave - Туристическое агентство</title>
     <link rel="stylesheet" href="styles.css">
-    <link rel="stylesheet" href="app/app.component.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
-    <script type="module" src="app/app.component.js"></script>
+    <link rel="icon" type="image/x-icon" href="assets/favicon.ico">
 </head>
 <body>
     <div id="app"></div>
@@ -17,12 +16,25 @@
         import AppComponent from './app/app.component.js';
         
         const app = new AppComponent();
-        document.getElementById('app').innerHTML = app.render();
         
-        // Инициализация после рендера
-        setTimeout(() => {
-            app.afterRender();
-        }, 100);
+        function renderApp() {
+            document.getElementById('app').innerHTML = app.render();
+            setTimeout(() => app.afterRender(), 100);
+        }
+        
+        // Первоначальный рендер
+        renderApp();
+        
+        // Обработка изменений hash
+        window.addEventListener('hashchange', renderApp);
+        
+        // Для навигации по ссылкам
+        document.addEventListener('click', (e) => {
+            if (e.target.tagName === 'A' && e.target.getAttribute('href')?.startsWith('#')) {
+                e.preventDefault();
+                window.location.hash = e.target.getAttribute('href');
+            }
+        });
     </script>
 </body>
 </html>
