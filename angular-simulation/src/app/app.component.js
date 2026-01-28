@@ -5,12 +5,15 @@ import FooterComponent from './components/footer/footer.component.js';
 import FiltersComponent from './components/filters/filters.component.js';
 import TourService from './services/tour.service.js';
 import CartService from './services/cart.service.js';
+import CartComponent from './pages/cart/cart.component.js';
+import AuthService from './services/auth.service.js';
 
 class AppComponent {
     constructor() {
+        this.authService = new AuthService();
         this.tourService = new TourService();
         this.cartService = new CartService();
-        this.header = new HeaderComponent(this.cartService);
+        this.header = new HeaderComponent(this.cartService, this.authService);
         this.hero = new HeroComponent();
         this.footer = new FooterComponent();
         this.currentPage = 'home';
@@ -22,27 +25,38 @@ class AppComponent {
         };
     }
 
-    render() {
-        // Определяем текущую страницу по hash
-        const hash = window.location.hash;
-        if (hash.startsWith('#/tour/')) {
-            this.currentPage = 'tour-detail';
-            this.currentTourId = hash.split('/')[2];
-        } else if (hash === '#/tours') {
-            this.currentPage = 'tours';
-        } else {
-            this.currentPage = 'home';
-        }
-
-        switch (this.currentPage) {
-            case 'tour-detail':
-                return this.renderTourDetail();
-            case 'tours':
-                return this.renderToursPage();
-            default:
-                return this.renderHomePage();
-        }
+render() {
+    const hash = window.location.hash;
+    if (hash.startsWith('#/tour/')) {
+        this.currentPage = 'tour-detail';
+        this.currentTourId = hash.split('/')[2];
+    } else if (hash === '#/cart') {
+        this.currentPage = 'cart';
+    } else if (hash === '#/auth') {
+        this.currentPage = 'auth';
+    } else if (hash === '#/profile') {
+        this.currentPage = 'profile';
+    } else if (hash === '#/tours') {
+        this.currentPage = 'tours';
+    } else {
+        this.currentPage = 'home';
     }
+
+    switch (this.currentPage) {
+        case 'tour-detail':
+            return this.renderTourDetail();
+        case 'cart':
+            return this.renderCartPage();    
+        case 'auth':
+            return this.renderAuthPage();      
+        case 'profile':
+            return this.renderProfilePage();   
+        case 'tours':
+            return this.renderToursPage();
+        default:
+            return this.renderHomePage();
+    }
+}
 
     renderHomePage() {
         const popularTours = this.tourService.getPopularTours();
@@ -172,40 +186,171 @@ class AppComponent {
         `;
     }
 
-    afterRender() {
-        this.header.afterRender();
-        this.hero.afterRender();
-        this.footer.afterRender();
+    // Метод для рендеринга страницы корзины
+renderCartPage() {
+    const cart = new CartComponent();
+    return `
+    ${this.header.render()}
+    ${cart.render()}
+    ${this.footer.render()}
+    `;
+}
 
-        // Обработка кликов по категориям на главной
-        if (this.currentPage === 'home') {
-            document.querySelectorAll('.category-card').forEach(card => {
-                card.addEventListener('click', () => {
-                    const category = card.dataset.category;
-                    window.location.hash = `#/tours`;
-                    // Можно добавить автоматическую установку фильтра
-                });
+// Метод для рендеринга страницы авторизации
+renderAuthPage() {
+    // Если пользователь уже авторизован, перенаправляем в профиль
+    if (this.authService.isLoggedIn()) {
+        window.location.hash = '#/profile';
+        return '';
+    }
+
+    return `
+    ${this.header.render()}
+    
+    <main class="container auth-page">
+        <div class="auth-container">
+            <div class="auth-hero">
+                <h1>Добро пожаловать в TravelWave</h1>
+                <p>Войдите или зарегистрируйтесь, чтобы получить доступ ко всем возможностям</p>
+            </div>
+            
+            <div class="auth-forms">
+                <div class="login-section">
+                    <h2>Вход</h2>
+                    <button class="btn btn-primary" id="showLoginModal">
+                        Войти в аккаунт
+                    </button>
+                </div>
+                
+                <div class="register-section">
+                    <h2>Регистрация</h2>
+                    <p>Создайте аккаунт для:</p>
+                    <ul>
+                        <li>Быстрого оформления заказов</li>
+                        <li>Истории бронирований</li>
+                        <li>Специальных предложений</li>
+                    </ul>
+                    <button class="btn btn-accent" id="showRegisterModal">
+                        Зарегистрироваться
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+    
+    ${this.footer.render()}
+    `;
+}
+
+// Метод для рендеринга страницы профиля
+renderProfilePage() {
+    const user = this.authService.getCurrentUser();
+    
+    if (!user) {
+        window.location.hash = '#/auth';
+        return '';
+    }
+
+    return `
+    ${this.header.render()}
+    
+    <main class="container profile-page">
+        <div class="profile-header">
+            <h1>👤 Личный кабинет</h1>
+            <p>Добро пожаловать, ${user.name}!</p>
+        </div>
+        
+        <div class="profile-layout">
+            <aside class="profile-sidebar">
+                <div class="user-info-card">
+                    <div class="user-avatar">
+                        ${user.name.charAt(0).toUpperCase()}
+                    </div>
+                    <h3>${user.name}</h3>
+                    <p>${user.email}</p>
+                    <button class="btn btn-small" id="logout">Выйти</button>
+                </div>
+                
+                <nav class="profile-nav">
+                    <a href="#/profile" class="nav-item active">📋 Мои заказы</a>
+                    <a href="#/profile/settings" class="nav-item">⚙️ Настройки</a>
+                    <a href="#/profile/favorites" class="nav-item">❤️ Избранное</a>
+                </nav>
+            </aside>
+            
+            <div class="profile-content">
+                <h2>Мои заказы</h2>
+                <div class="orders-list">
+                    <p>Здесь будут отображаться ваши заказы</p>
+                </div>
+            </div>
+        </div>
+    </main>
+    
+    ${this.footer.render()}
+    `;
+}
+
+afterRender() {
+    this.header.afterRender();
+    this.hero.afterRender();
+    this.footer.afterRender();
+
+    // Обработка кликов по категориям на главной
+    if (this.currentPage === 'home') {
+        document.querySelectorAll('.category-card').forEach(card => {
+            card.addEventListener('click', () => {
+                const category = card.dataset.category;
+                window.location.hash = `#/tours`;
             });
-        }
-
-        // Инициализация фильтров на странице туров
-        if (this.currentPage === 'tours') {
-            const filters = new FiltersComponent();
-            filters.afterRender();
-        }
-
-        // Инициализация деталей тура
-        if (this.currentPage === 'tour-detail') {
-            const tour = this.tourService.getTourById(this.currentTourId);
-            const details = new TourDetailsComponent(this.currentTourId);
-            details.afterRender(tour, this.tourService);
-        }
-
-        // Навигация по hash
-        window.addEventListener('hashchange', () => {
-            this.rerender();
         });
     }
+
+    // Инициализация фильтров на странице туров
+    if (this.currentPage === 'tours') {
+        const filters = new FiltersComponent();
+        filters.afterRender();
+    }
+
+    // Инициализация деталей тура
+    if (this.currentPage === 'tour-detail') {
+        const tour = this.tourService.getTourById(this.currentTourId);
+        const details = new TourDetailsComponent(this.currentTourId);
+        details.afterRender(tour, this.tourService);
+    }
+
+    // Инициализация модальных окон на странице авторизации
+    if (this.currentPage === 'auth') {
+        document.getElementById('showLoginModal')?.addEventListener('click', () => {
+            import('./components/auth-modal/auth-modal.component.js').then(module => {
+                module.default.open((user) => {
+                    window.location.hash = '#/profile';
+                });
+            });
+        });
+
+        document.getElementById('showRegisterModal')?.addEventListener('click', () => {
+            import('./components/auth-modal/auth-modal.component.js').then(module => {
+                module.default.open((user) => {
+                    window.location.hash = '#/profile';
+                });
+            });
+        });
+    }
+
+    // Обработка выхода на странице профиля
+    if (this.currentPage === 'profile') {
+        document.getElementById('logout')?.addEventListener('click', () => {
+            this.authService.logout();
+            window.location.hash = '#/';
+        });
+    }
+
+    // Навигация по hash
+    window.addEventListener('hashchange', () => {
+        this.rerender();
+    });
+}
 
     getFilteredTours() {
         let tours = this.tourService.getAllTours();
