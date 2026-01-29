@@ -7,6 +7,9 @@ import TourService from './services/tour.service.js';
 import CartService from './services/cart.service.js';
 import CartComponent from './pages/cart/cart.component.js';
 import AuthService from './services/auth.service.js';
+import AboutComponent from './pages/about/about.component.js';
+import SearchComponent from './pages/search/search.component.js';
+import AdminComponent from './pages/admin/admin.component.js';
 
 class AppComponent {
     constructor() {
@@ -38,6 +41,14 @@ render() {
         this.currentPage = 'profile';
     } else if (hash === '#/tours') {
         this.currentPage = 'tours';
+    } else if (hash === '#/about') {
+        this.currentPage = 'about';
+    } else if (hash.startsWith('#/search')) {
+        this.currentPage = 'search';
+    } else if (hash === '#/admin') {
+        this.currentPage = 'admin';
+    } else if (hash === '#/contacts') {
+        this.currentPage = 'contacts';
     } else {
         this.currentPage = 'home';
     }
@@ -46,13 +57,21 @@ render() {
         case 'tour-detail':
             return this.renderTourDetail();
         case 'cart':
-            return this.renderCartPage();    
+            return this.renderCartPage();
         case 'auth':
-            return this.renderAuthPage();      
+            return this.renderAuthPage();
         case 'profile':
-            return this.renderProfilePage();   
+            return this.renderProfilePage();
         case 'tours':
             return this.renderToursPage();
+        case 'about':
+            return this.renderAboutPage();      
+        case 'search':
+            return this.renderSearchPage();     
+        case 'admin':
+            return this.renderAdminPage();      
+        case 'contacts':
+            return this.renderContactsPage();   
         default:
             return this.renderHomePage();
     }
@@ -186,7 +205,7 @@ render() {
         `;
     }
 
-    // Метод для рендеринга страницы корзины
+
 renderCartPage() {
     const cart = new CartComponent();
     return `
@@ -196,7 +215,7 @@ renderCartPage() {
     `;
 }
 
-// Метод для рендеринга страницы авторизации
+
 renderAuthPage() {
     // Если пользователь уже авторизован, перенаправляем в профиль
     if (this.authService.isLoggedIn()) {
@@ -242,7 +261,7 @@ renderAuthPage() {
     `;
 }
 
-// Метод для рендеринга страницы профиля
+
 renderProfilePage() {
     const user = this.authService.getCurrentUser();
     
@@ -282,6 +301,133 @@ renderProfilePage() {
                 <h2>Мои заказы</h2>
                 <div class="orders-list">
                     <p>Здесь будут отображаться ваши заказы</p>
+                </div>
+            </div>
+        </div>
+    </main>
+    
+    ${this.footer.render()}
+    `;
+}
+
+// Метод для страницы "О нас"
+renderAboutPage() {
+    const about = new AboutComponent();
+    return `
+    ${this.header.render()}
+    ${about.render()}
+    ${this.footer.render()}
+    `;
+}
+
+// Метод для страницы поиска
+async renderSearchPage() {
+    const search = new SearchComponent();
+    return `
+    ${this.header.render()}
+    ${await search.render()}
+    ${this.footer.render()}
+    `;
+}
+
+// Метод для админ-панели
+renderAdminPage() {
+    const admin = new AdminComponent();
+    return `
+    ${this.header.render()}
+    ${admin.render()}
+    ${this.footer.render()}
+    `;
+}
+
+// Метод для страницы "Контакты"
+renderContactsPage() {
+    return `
+    ${this.header.render()}
+    
+    <main class="container contacts-page">
+        <div class="contacts-hero">
+            <h1>📞 Контакты</h1>
+            <p>Свяжитесь с нами любым удобным способом</p>
+        </div>
+        
+        <div class="contacts-grid">
+            <div class="contact-info">
+                <div class="contact-card">
+                    <div class="contact-icon">📍</div>
+                    <h3>Адрес</h3>
+                    <p>г. Москва, ул. Туристическая, д. 1</p>
+                    <p>БЦ "Глобус", 5 этаж, офис 502</p>
+                </div>
+                
+                <div class="contact-card">
+                    <div class="contact-icon">📞</div>
+                    <h3>Телефоны</h3>
+                    <p>+7 (495) 123-45-67</p>
+                    <p>+7 (800) 555-35-35 (бесплатно по РФ)</p>
+                </div>
+                
+                <div class="contact-card">
+                    <div class="contact-icon">✉️</div>
+                    <h3>Email</h3>
+                    <p>info@travelwave.ru</p>
+                    <p>booking@travelwave.ru</p>
+                </div>
+                
+                <div class="contact-card">
+                    <div class="contact-icon">⏰</div>
+                    <h3>Часы работы</h3>
+                    <p>Пн-Пт: 9:00 - 20:00</p>
+                    <p>Сб-Вс: 10:00 - 18:00</p>
+                </div>
+            </div>
+            
+            <div class="contact-form-container">
+                <h2>Форма обратной связи</h2>
+                <form class="contact-form">
+                    <div class="form-group">
+                        <label for="contactName">Ваше имя *</label>
+                        <input type="text" id="contactName" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="contactEmail">Email *</label>
+                        <input type="email" id="contactEmail" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="contactPhone">Телефон</label>
+                        <input type="tel" id="contactPhone">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="contactSubject">Тема</label>
+                        <select id="contactSubject">
+                            <option value="booking">Бронирование тура</option>
+                            <option value="question">Вопрос по туру</option>
+                            <option value="feedback">Отзыв</option>
+                            <option value="other">Другое</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="contactMessage">Сообщение *</label>
+                        <textarea id="contactMessage" rows="5" required></textarea>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary">
+                        Отправить сообщение
+                    </button>
+                </form>
+            </div>
+        </div>
+        
+        <div class="map-container">
+            <h2>Как нас найти</h2>
+            <div class="map-placeholder">
+                <div class="map-mock">
+                    <p>🚗 Здесь будет карта</p>
+                    <p>Москва, ул. Туристическая, д. 1</p>
                 </div>
             </div>
         </div>
