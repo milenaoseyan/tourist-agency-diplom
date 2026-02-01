@@ -4,36 +4,182 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TravelWave - Туристическое агентство</title>
+    
+    <!-- SEO мета-теги -->
+    <meta name="description" content="TravelWave - лучшие туры по выгодным ценам. Более 500 направлений по всему миру. Бронирование туров онлайн.">
+    <meta name="keywords" content="туры, путешествия, отдых, турагентство, бронирование туров">
+    <meta name="author" content="TravelWave">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>✈️</text></svg>">
+    
+    <!-- CSS -->
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
-    <link rel="icon" type="image/x-icon" href="assets/favicon.ico">
+    
+    <!-- Предзагрузка критичных ресурсов -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preload" as="style" href="styles.css">
+    
+    <!-- Manifest для PWA -->
+    <link rel="manifest" href="app.webmanifest">
+    
+    <!-- Тема для мобильных -->
+    <meta name="theme-color" content="#3f51b5">
+    
+    <!-- iOS мета-теги -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="TravelWave">
+    
+    <!-- Windows мета-теги -->
+    <meta name="msapplication-TileColor" content="#3f51b5">
+    
+    <!-- Open Graph для соц. сетей -->
+    <meta property="og:title" content="TravelWave - Туристическое агентство">
+    <meta property="og:description" content="Лучшие туры по выгодным ценам. Бронируйте онлайн!">
+    <meta property="og:image" content="https://images.unsplash.com/photo-1488646953014-85cb44e25828?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80">
+    <meta property="og:url" content="https://travelwave.ru">
+    <meta property="og:type" content="website">
+    
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="TravelWave - Туристическое агентство">
+    <meta name="twitter:description" content="Лучшие туры по выгодным ценам. Бронируйте онлайн!">
 </head>
 <body>
+    <!-- Прогресс-бар загрузки -->
+    <div class="page-load-progress">
+        <div class="progress-bar"></div>
+    </div>
+    
+    <!-- Контейнер приложения -->
     <div id="app"></div>
     
-    <script type="module">
-        import AppComponent from './app/app.component.js';
-        
-        const app = new AppComponent();
-        
-        function renderApp() {
-            document.getElementById('app').innerHTML = app.render();
-            setTimeout(() => app.afterRender(), 100);
+    <!-- Service Worker регистрация -->
+    <script>
+        // Регистрация Service Worker для PWA
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js').then(registration => {
+                    console.log('ServiceWorker зарегистрирован:', registration.scope);
+                }).catch(error => {
+                    console.log('Ошибка регистрации ServiceWorker:', error);
+                });
+            });
         }
         
-        // Первоначальный рендер
-        renderApp();
-        
-        // Обработка изменений hash
-        window.addEventListener('hashchange', renderApp);
-        
-        // Для навигации по ссылкам
-        document.addEventListener('click', (e) => {
-            if (e.target.tagName === 'A' && e.target.getAttribute('href')?.startsWith('#')) {
+        // Предотвращение контекстного меню на изображениях
+        document.addEventListener('contextmenu', function(e) {
+            if (e.target.nodeName === 'IMG') {
                 e.preventDefault();
-                window.location.hash = e.target.getAttribute('href');
             }
+        });
+    </script>
+    
+    <!-- Основной скрипт приложения -->
+    <script type="module">
+        import AppComponent from './app/app.component.js';
+        import AppInitializer from './app/app.init.js';
+        
+        // Показываем прогресс загрузки
+        const progressBar = document.querySelector('.progress-bar');
+        const progressContainer = document.querySelector('.page-load-progress');
+        
+        // Симуляция прогресса загрузки
+        let progress = 0;
+        const progressInterval = setInterval(() => {
+            progress += Math.random() * 20;
+            if (progress >= 90) {
+                clearInterval(progressInterval);
+                progress = 90;
+            }
+            progressBar.style.width = progress + '%';
+        }, 100);
+        
+        // Инициализация приложения
+        async function initializeApp() {
+            try {
+                // Инициализация системных компонентов
+                await AppInitializer.init();
+                
+                // Создание и рендер основного приложения
+                const app = new AppComponent();
+                
+                function renderApp() {
+                    document.getElementById('app').innerHTML = app.render();
+                    setTimeout(() => {
+                        app.afterRender();
+                        // Завершаем прогресс загрузки
+                        progressBar.style.width = '100%';
+                        setTimeout(() => {
+                            progressContainer.style.opacity = '0';
+                            setTimeout(() => {
+                                progressContainer.style.display = 'none';
+                            }, 300);
+                        }, 300);
+                    }, 100);
+                }
+                
+                // Первоначальный рендер
+                renderApp();
+                
+                // Обработка изменений hash
+                window.addEventListener('hashchange', renderApp);
+                
+                // Навигация по ссылкам
+                document.addEventListener('click', (e) => {
+                    if (e.target.tagName === 'A' && e.target.getAttribute('href')?.startsWith('#')) {
+                        e.preventDefault();
+                        window.location.hash = e.target.getAttribute('href');
+                    }
+                });
+                
+                // Обработка навигации вперед/назад
+                window.addEventListener('popstate', renderApp);
+                
+                console.log('✅ Приложение успешно загружено!');
+                
+            } catch (error) {
+                console.error('❌ Ошибка при загрузке приложения:', error);
+                
+                // Показываем экран ошибки
+                document.getElementById('app').innerHTML = `
+                    <div class="error-screen">
+                        <div class="error-icon">😔</div>
+                        <h2>Что-то пошло не так</h2>
+                        <p>Не удалось загрузить приложение. Пожалуйста, попробуйте обновить страницу.</p>
+                        <button onclick="window.location.reload()" class="btn btn-primary">
+                            Обновить страницу
+                        </button>
+                    </div>
+                `;
+                
+                // Скрываем прогресс-бар
+                progressContainer.style.display = 'none';
+            }
+        }
+        
+        // Запуск приложения когда DOM загружен
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initializeApp);
+        } else {
+            initializeApp();
+        }
+    </script>
+    
+    <!-- Аналитика (опционально) -->
+    <script>
+        // Пример простой аналитики
+        window.addEventListener('load', () => {
+            // Логируем посещение страницы
+            console.log('Страница загружена:', {
+                url: window.location.href,
+                userAgent: navigator.userAgent,
+                screen: `${window.innerWidth}x${window.innerHeight}`
+            });
         });
     </script>
 </body>

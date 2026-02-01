@@ -10,6 +10,7 @@ import AuthService from './services/auth.service.js';
 import AboutComponent from './pages/about/about.component.js';
 import SearchComponent from './pages/search/search.component.js';
 import AdminComponent from './pages/admin/admin.component.js';
+import MobileMenuComponent from './components/mobile-menu/mobile-menu.component.js';
 
 class AppComponent {
     constructor() {
@@ -19,6 +20,7 @@ class AppComponent {
         this.header = new HeaderComponent(this.cartService, this.authService);
         this.hero = new HeroComponent();
         this.footer = new FooterComponent();
+        this.mobileMenu = new MobileMenuComponent();
         this.currentPage = 'home';
         this.currentTourId = null;
         this.filters = {
@@ -86,6 +88,7 @@ render() {
 
         return `
         ${this.header.render()}
+        ${this.mobileMenu.render()}
         ${this.hero.render()}
         
         <main class="container">
@@ -159,6 +162,7 @@ render() {
 
         return `
         ${this.header.render()}
+        ${this.mobileMenu.render()}
         
         <main class="container tours-page">
             <div class="tours-header">
@@ -196,6 +200,7 @@ render() {
         
         return `
         ${this.header.render()}
+        ${this.mobileMenu.render()}
         
         <main class="container">
             ${details.render(tour)}
@@ -210,6 +215,7 @@ renderCartPage() {
     const cart = new CartComponent();
     return `
     ${this.header.render()}
+    ${this.mobileMenu.render()}
     ${cart.render()}
     ${this.footer.render()}
     `;
@@ -225,6 +231,7 @@ renderAuthPage() {
 
     return `
     ${this.header.render()}
+    ${this.mobileMenu.render()}
     
     <main class="container auth-page">
         <div class="auth-container">
@@ -272,6 +279,7 @@ renderProfilePage() {
 
     return `
     ${this.header.render()}
+    ${this.mobileMenu.render()}
     
     <main class="container profile-page">
         <div class="profile-header">
@@ -315,6 +323,7 @@ renderAboutPage() {
     const about = new AboutComponent();
     return `
     ${this.header.render()}
+    ${this.mobileMenu.render()}
     ${about.render()}
     ${this.footer.render()}
     `;
@@ -325,6 +334,7 @@ async renderSearchPage() {
     const search = new SearchComponent();
     return `
     ${this.header.render()}
+    ${this.mobileMenu.render()}
     ${await search.render()}
     ${this.footer.render()}
     `;
@@ -335,6 +345,7 @@ renderAdminPage() {
     const admin = new AdminComponent();
     return `
     ${this.header.render()}
+    ${this.mobileMenu.render()}
     ${admin.render()}
     ${this.footer.render()}
     `;
@@ -344,6 +355,7 @@ renderAdminPage() {
 renderContactsPage() {
     return `
     ${this.header.render()}
+    ${this.mobileMenu.render()}
     
     <main class="container contacts-page">
         <div class="contacts-hero">
@@ -441,6 +453,7 @@ afterRender() {
     this.header.afterRender();
     this.hero.afterRender();
     this.footer.afterRender();
+    this.mobileMenu.afterRender();
 
     // Обработка кликов по категориям на главной
     if (this.currentPage === 'home') {
