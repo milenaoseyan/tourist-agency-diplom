@@ -11,6 +11,8 @@ import AboutComponent from './pages/about/about.component.js';
 import SearchComponent from './pages/search/search.component.js';
 import AdminComponent from './pages/admin/admin.component.js';
 import MobileMenuComponent from './components/mobile-menu/mobile-menu.component.js';
+import PromotionsComponent from './pages/promotions/promotions.component.js';
+import RecommendationsComponent from './components/recommendations/recommendations.component.js';
 
 class AppComponent {
     constructor() {
@@ -32,6 +34,9 @@ class AppComponent {
 
 render() {
     const hash = window.location.hash;
+    if (hash === '#/promotions') {
+    this.currentPage = 'promotions';
+    }
     if (hash.startsWith('#/tour/')) {
         this.currentPage = 'tour-detail';
         this.currentTourId = hash.split('/')[2];
@@ -55,6 +60,10 @@ render() {
         this.currentPage = 'home';
     }
 
+    switch (this.currentPage) {
+        case 'promotions':
+            return this.renderPromotionsPage();
+    }
     switch (this.currentPage) {
         case 'tour-detail':
             return this.renderTourDetail();
@@ -100,6 +109,16 @@ render() {
                 <div class="tours-grid">
                     ${tourCards}
                 </div>
+            </section>
+            
+                <div id="recommendations-container"></div>
+
+                <section class="promotions-preview">
+                <div class="section-header">
+                    <h2>🎁 Актуальные акции</h2>
+                    <a href="#/promotions" class="view-all">Все акции →</a>
+                </div>
+            ${this.renderPromotionsPreview()}
             </section>
             
             <section class="categories">
@@ -340,6 +359,17 @@ async renderSearchPage() {
     `;
 }
 
+// Метод для рендеринга страницы акций
+async renderPromotionsPage() {
+    const promotions = new PromotionsComponent();
+    return `
+    ${this.header.render()}
+    ${this.mobileMenu.render()}
+    ${await promotions.render()}
+    ${this.footer.render()}
+    `;
+}
+
 // Метод для админ-панели
 renderAdminPage() {
     const admin = new AdminComponent();
@@ -449,7 +479,34 @@ renderContactsPage() {
     `;
 }
 
-afterRender() {
+renderPromotionsPreview() {
+    const discountService = new DiscountService();
+    const promotions = discountService.getActivePromotions().slice(0, 2);
+    
+    if (promotions.length === 0) {
+        return '';
+    }
+    
+    return `
+    <div class="promotions-preview-grid">
+        ${promotions.map(promo => `
+            <div class="promotion-preview-card">
+                <div class="promo-preview-image">
+                    <img src="${promo.image}" alt="${promo.title}" loading="lazy">
+                    <div class="promo-preview-badge">-${promo.discount}%</div>
+                </div>
+                <div class="promo-preview-content">
+                    <h3>${promo.title}</h3>
+                    <p>${promo.description}</p>
+                    <a href="#/promotions" class="btn btn-small">Подробнее</a>
+                </div>
+            </div>
+        `).join('')}
+    </div>
+    `;
+}
+
+async afterRender() {
     this.header.afterRender();
     this.hero.afterRender();
     this.footer.afterRender();
@@ -463,6 +520,7 @@ afterRender() {
                 window.location.hash = `#/tours`;
             });
         });
+            await this.initRecommendations();
     }
 
     // Инициализация фильтров на странице туров
@@ -509,6 +567,16 @@ afterRender() {
     window.addEventListener('hashchange', () => {
         this.rerender();
     });
+}
+
+async initRecommendations() {
+    const recommendations = new RecommendationsComponent();
+    const container = document.getElementById('recommendations-container');
+    
+    if (container) {
+        container.innerHTML = await recommendations.render();
+        recommendations.afterRender();
+    }
 }
 
     getFilteredTours() {
