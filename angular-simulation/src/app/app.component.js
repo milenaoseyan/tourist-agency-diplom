@@ -13,6 +13,29 @@ import AdminComponent from './pages/admin/admin.component.js';
 import MobileMenuComponent from './components/mobile-menu/mobile-menu.component.js';
 import PromotionsComponent from './pages/promotions/promotions.component.js';
 import RecommendationsComponent from './components/recommendations/recommendations.component.js';
+import { NgModule } from '@angular/core';
+import { BrowserModule } from '@angular/platform-browser';
+import { FormsModule } from '@angular/forms';
+import { ClickOutsideDirective } from './directives/click-outside.directive';
+
+@NgModule({
+declarations: [
+    AppComponent,
+    LanguageSwitcherComponent,
+    ChatSupportComponent,
+    AdvancedFiltersComponent,
+    FaqComponent,
+    ClickOutsideDirective
+],
+imports: [
+    BrowserModule,
+    FormsModule
+],
+providers: [],
+bootstrap: [AppComponent]
+})
+export class AppModule { }
+
 
 class AppComponent {
     constructor() {

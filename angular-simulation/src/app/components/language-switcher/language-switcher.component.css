@@ -1,0 +1,89 @@
+.language-switcher {
+position: relative;
+display: inline-block;
+}
+
+.language-current {
+display: flex;
+align-items: center;
+gap: 8px;
+padding: 8px 12px;
+background: rgba(255, 255, 255, 0.1);
+border: 1px solid rgba(255, 255, 255, 0.2);
+border-radius: 8px;
+color: white;
+cursor: pointer;
+transition: all 0.3s ease;
+font-size: 14px;
+}
+
+.language-current:hover {
+background: rgba(255, 255, 255, 0.2);
+}
+
+.language-flag {
+font-size: 16px;
+}
+
+.language-arrow {
+font-size: 10px;
+transition: transform 0.3s ease;
+}
+
+.language-dropdown {
+position: absolute;
+top: 100%;
+right: 0;
+margin-top: 5px;
+background: white;
+border-radius: 8px;
+box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+min-width: 150px;
+z-index: 1000;
+display: none;
+overflow: hidden;
+}
+
+.language-dropdown.open {
+display: block;
+animation: fadeIn 0.3s ease;
+}
+
+.language-option {
+display: flex;
+align-items: center;
+justify-content: space-between;
+width: 100%;
+padding: 10px 15px;
+background: none;
+border: none;
+cursor: pointer;
+text-align: left;
+transition: background 0.3s ease;
+color: #333;
+}
+
+.language-option:hover {
+background: #f5f5f5;
+}
+
+.language-option.active {
+background: #e3f2fd;
+color: #1976d2;
+}
+
+.language-check {
+color: #4caf50;
+font-weight: bold;
+}
+
+@keyframes fadeIn {
+from {
+    opacity: 0;
+    transform: translateY(-10px);
+}
+to {
+    opacity: 1;
+    transform: translateY(0);
+}
+}
