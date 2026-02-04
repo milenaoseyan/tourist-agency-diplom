@@ -4210,3 +4210,350 @@ input, select, textarea {
         grid-template-columns: 1fr;
     }
 }
+
+/* Стили для Дня 8 */
+
+/* Центр уведомлений */
+.notification-center {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 9999;
+  max-width: 400px;
+  pointer-events: none;
+}
+
+.notifications-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.notification-item {
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
+  padding: 15px;
+  display: flex;
+  align-items: flex-start;
+  gap: 15px;
+  pointer-events: auto;
+  animation: slideInRight 0.3s ease-out;
+  border-left: 4px solid #ccc;
+  position: relative;
+  overflow: hidden;
+}
+
+.notification-item.success {
+  border-left-color: #4CAF50;
+}
+
+.notification-item.error {
+  border-left-color: #f44336;
+}
+
+.notification-item.warning {
+  border-left-color: #FF9800;
+}
+
+.notification-item.info {
+  border-left-color: #2196F3;
+}
+
+.notification-item.loading {
+  border-left-color: #9C27B0;
+}
+
+.notification-icon {
+  font-size: 1.5rem;
+  flex-shrink: 0;
+}
+
+.notification-content {
+  flex: 1;
+}
+
+.notification-title {
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 5px;
+  font-size: 0.95rem;
+}
+
+.notification-message {
+  color: #666;
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+
+.notification-close {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  color: #999;
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+}
+
+.notification-close:hover {
+  background: #f5f5f5;
+  color: #333;
+}
+
+.notification-progress {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: rgba(0, 0, 0, 0.1);
+}
+
+.notification-progress .progress-bar {
+  height: 100%;
+  background: currentColor;
+  transition: width 0.3s;
+}
+
+/* Избранное */
+.favorites-empty {
+  text-align: center;
+  padding: 80px 20px;
+}
+
+.empty-icon {
+  font-size: 5rem;
+  margin-bottom: 20px;
+  opacity: 0.3;
+}
+
+.favorites-empty h3 {
+  color: #333;
+  margin-bottom: 15px;
+}
+
+.favorites-empty p {
+  color: #666;
+  margin-bottom: 30px;
+  max-width: 400px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.favorites-section {
+  margin: 40px 0;
+}
+
+.favorites-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+  padding-bottom: 20px;
+  border-bottom: 2px solid #f0f0f0;
+}
+
+.favorites-header h2 {
+  color: #333;
+  margin: 0;
+}
+
+.favorites-stats {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.favorites-count {
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.favorites-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 25px;
+  margin-bottom: 40px;
+}
+
+.favorites-actions {
+  text-align: center;
+  padding-top: 30px;
+  border-top: 2px solid #f0f0f0;
+}
+
+/* Кнопки избранного на карточках */
+.tour-card .tour-image {
+  position: relative;
+}
+
+.favorite-btn {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: rgba(255, 255, 255, 0.9);
+  border: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  cursor: pointer;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s;
+  z-index: 2;
+}
+
+.favorite-btn:hover {
+  background: white;
+  transform: scale(1.1);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+}
+
+.favorite-btn.active {
+  background: #ff4081;
+  color: white;
+}
+
+/* Анимации */
+@keyframes slideInRight {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideOutRight {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+}
+
+.notification-item.removing {
+  animation: slideOutRight 0.3s ease-out;
+}
+
+/* Индикатор загрузки */
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9998;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s;
+}
+
+.loading-overlay.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.loading-spinner {
+  width: 60px;
+  height: 60px;
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #3f51b5;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+/* Оптимизации для производительности */
+.tour-image img {
+  content-visibility: auto;
+  contain-intrinsic-size: 300px;
+}
+
+/* Lazy loading для изображений */
+img.lazy {
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+img.lazy.loaded {
+  opacity: 1;
+}
+
+/* Улучшенные hover эффекты */
+@media (hover: hover) {
+  .tour-card {
+    transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+  .tour-card:hover {
+    transform: translateY(-4px);
+  }
+}
+
+/* Print styles */
+@media print {
+  .notification-center,
+  .favorite-btn,
+  .loading-overlay {
+    display: none !important;
+  }
+}
+
+/* Темная тема улучшения */
+@media (prefers-color-scheme: dark) {
+  .notification-item {
+    background: #2d2d2d;
+    color: #fff;
+    border-left-color: #444;
+  }
+  
+  .notification-item.success {
+    border-left-color: #4CAF50;
+  }
+  
+  .notification-item.error {
+    border-left-color: #f44336;
+  }
+  
+  .notification-message {
+    color: #ccc;
+  }
+  
+  .notification-close {
+    color: #999;
+  }
+  
+  .notification-close:hover {
+    background: #444;
+    color: #fff;
+  }
+  
+  .favorite-btn {
+    background: rgba(45, 45, 45, 0.9);
+    color: #fff;
+  }
+  
+  .favorite-btn.active {
+    background: #ff4081;
+  }
+}

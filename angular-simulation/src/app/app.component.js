@@ -17,6 +17,9 @@ import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule } from '@angular/forms';
 import { ClickOutsideDirective } from './directives/click-outside.directive';
+import store from './store/store.js';
+import NotificationCenterComponent from './components/notification-center/notification-center.component.js';
+import FavoritesComponent from './components/favorites/favorites.component.js';
 
 @NgModule({
 declarations: [
@@ -39,9 +42,21 @@ export class AppModule { }
 
 class AppComponent {
     constructor() {
+        store.init();
         this.authService = new AuthService();
         this.tourService = new TourService();
         this.cartService = new CartService();
+            this.header = new HeaderComponent();
+    this.footer = new FooterComponent();
+    this.hero = new HeroComponent();
+    this.mobileMenu = new MobileMenuComponent();
+    this.notificationCenter = new NotificationCenterComponent();
+    
+    this.currentPage = 'home';
+    this.currentTourId = null;
+        this.unsubscribe = store.subscribe((state) => {
+    this.handleStateChange(state);
+    });
         this.header = new HeaderComponent(this.cartService, this.authService);
         this.hero = new HeroComponent();
         this.footer = new FooterComponent();
@@ -55,14 +70,37 @@ class AppComponent {
         };
     }
 
+handleStateChange(state) {
+    // Обновляем количество в корзине в хедере
+    const cartCount = state.cart.reduce((sum, item) => sum + item.quantity, 0);
+    document.querySelectorAll('.cart-count').forEach(el => {
+    el.textContent = cartCount;
+    });
+    
+    // Обновляем состояние избранного
+    document.querySelectorAll('.favorite-btn').forEach(btn => {
+    const tourId = parseInt(btn.dataset.tourId);
+    const isFavorite = state.favorites.includes(tourId);
+    btn.classList.toggle('active', isFavorite);
+    btn.innerHTML = isFavorite ? '❤️' : '🤍';
+    });
+}
+
 render() {
     const hash = window.location.hash;
+        if (hash === '#/favorites') {
+    this.currentPage = 'favorites';
+    }
     if (hash === '#/promotions') {
     this.currentPage = 'promotions';
     }
     if (hash.startsWith('#/tour/')) {
         this.currentPage = 'tour-detail';
         this.currentTourId = hash.split('/')[2];
+            return `
+    ${this.notificationCenter.render()}
+    ${this.renderCurrentPage()}
+    `;
     } else if (hash === '#/cart') {
         this.currentPage = 'cart';
     } else if (hash === '#/auth') {
@@ -529,11 +567,27 @@ renderPromotionsPreview() {
     `;
 }
 
+async renderFavoritesPage() {
+    const favorites = new FavoritesComponent();
+    return `
+    ${this.header.render()}
+    ${this.mobileMenu.render()}
+    <main class="container">
+        ${await favorites.render()}
+    </main>
+    ${this.footer.render()}
+    `;
+}
+
 async afterRender() {
+    store.init();
+    this.notificationCenter.afterRender();
     this.header.afterRender();
     this.hero.afterRender();
     this.footer.afterRender();
     this.mobileMenu.afterRender();
+    this.addFavoriteButtons();
+    this.trackPerformance();
 
     // Обработка кликов по категориям на главной
     if (this.currentPage === 'home') {
@@ -590,6 +644,88 @@ async afterRender() {
     window.addEventListener('hashchange', () => {
         this.rerender();
     });
+}
+
+addFavoriteButtons() {
+    document.querySelectorAll('.tour-card').forEach(card => {
+    const tourId = card.dataset.id;
+    if (!tourId) return;
+    
+    const favoriteBtn = document.createElement('button');
+    favoriteBtn.className = 'favorite-btn';
+    favoriteBtn.dataset.tourId = tourId;
+    favoriteBtn.innerHTML = store.isFavorite(parseInt(tourId)) ? '❤️' : '🤍';
+    favoriteBtn.title = 'Добавить в избранное';
+    
+    favoriteBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        store.dispatch({
+        type: 'TOGGLE_FAVORITE',
+        payload: parseInt(tourId)
+        });
+    });
+    
+    card.querySelector('.tour-image')?.appendChild(favoriteBtn);
+    });
+}
+
+trackPerformance() {
+    // Измерение времени загрузки
+    const perfData = {
+    domContentLoaded: performance.timing.domContentLoadedEventEnd - performance.timing.navigationStart,
+    pageLoad: performance.timing.loadEventEnd - performance.timing.navigationStart,
+    firstPaint: null,
+    firstContentfulPaint: null
+    };
+
+    // Отслеживание Core Web Vitals
+    if ('PerformanceObserver' in window) {
+      // FCP (First Contentful Paint)
+    const fcpObserver = new PerformanceObserver((entryList) => {
+        const entries = entryList.getEntries();
+        entries.forEach(entry => {
+        if (entry.name === 'first-contentful-paint') {
+            perfData.firstContentfulPaint = entry.startTime;
+        }
+        });
+    });
+    fcpObserver.observe({ entryTypes: ['paint'] });
+
+      // LCP (Largest Contentful Paint)
+    const lcpObserver = new PerformanceObserver((entryList) => {
+        const entries = entryList.getEntries();
+        const lastEntry = entries[entries.length - 1];
+        perfData.largestContentfulPaint = lastEntry.renderTime || lastEntry.loadTime;
+    });
+    lcpObserver.observe({ entryTypes: ['largest-contentful-paint'] });
+
+      // CLS (Cumulative Layout Shift)
+    let clsValue = 0;
+    const clsObserver = new PerformanceObserver((entryList) => {
+        for (const entry of entryList.getEntries()) {
+        if (!entry.hadRecentInput) {
+            clsValue += entry.value;
+        }
+        }
+        perfData.cumulativeLayoutShift = clsValue;
+    });
+    clsObserver.observe({ entryTypes: ['layout-shift'] });
+    }
+
+    // Логирование производительности
+    console.log('Performance metrics:', perfData);
+    
+    // Отправка в аналитику (если есть)
+    if (window.analyticsService) {
+    window.analyticsService.track('performance', perfData);
+    }
+}
+
+destroy() {
+    if (this.unsubscribe) {
+    this.unsubscribe();
+    }
+    this.notificationCenter.destroy();
 }
 
 async initRecommendations() {
