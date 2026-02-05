@@ -4557,3 +4557,1196 @@ img.lazy.loaded {
     background: #ff4081;
   }
 }
+
+/* Стили для Дня 9 */
+
+/* Компонент сравнения */
+.tour-comparison {
+  margin: 40px 0;
+}
+
+.comparison-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+  padding-bottom: 20px;
+  border-bottom: 2px solid #f0f0f0;
+}
+
+.comparison-header h2 {
+  color: #333;
+  margin: 0;
+}
+
+.comparison-actions {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.comparison-count {
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.comparison-table-container {
+  overflow-x: auto;
+  margin-bottom: 40px;
+  border-radius: 15px;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+}
+
+.comparison-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 800px;
+}
+
+.comparison-table th,
+.comparison-table td {
+  padding: 20px;
+  border-bottom: 1px solid #eee;
+  text-align: left;
+}
+
+.comparison-table thead th {
+  background: #f9f9f9;
+  font-weight: 600;
+  color: #333;
+  border-bottom: 2px solid #ddd;
+}
+
+.comparison-category {
+  background: #f5f7ff;
+  font-weight: 600;
+  color: #3f51b5;
+  width: 200px;
+}
+
+.comparison-tour-header {
+  text-align: center !important;
+  position: relative;
+}
+
+.remove-from-comparison {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: #ffebee;
+  color: #f44336;
+  border: none;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 1.2rem;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.remove-from-comparison:hover {
+  background: #f44336;
+  color: white;
+}
+
+.comparison-tour-header img {
+  width: 120px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 10px;
+  margin: 0 auto 15px;
+  display: block;
+}
+
+.comparison-tour-header h4 {
+  margin: 0 0 5px;
+  color: #333;
+  font-size: 1rem;
+}
+
+.tour-location {
+  color: #666;
+  font-size: 0.9rem;
+  margin: 0;
+}
+
+.comparison-value {
+  text-align: center;
+  color: #555;
+}
+
+.rating-display {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.rating-value {
+  color: #ff9800;
+  font-weight: 600;
+}
+
+.comparison-summary {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 30px;
+  border-radius: 15px;
+  margin-top: 40px;
+}
+
+.comparison-summary h3 {
+  color: white;
+  margin-bottom: 25px;
+  text-align: center;
+}
+
+.summary-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+  margin-bottom: 30px;
+}
+
+.summary-card {
+  background: rgba(255, 255, 255, 0.1);
+  padding: 20px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  backdrop-filter: blur(10px);
+}
+
+.summary-icon {
+  font-size: 2rem;
+}
+
+.summary-card h4 {
+  color: white;
+  margin: 0 0 5px;
+  font-size: 0.9rem;
+  opacity: 0.9;
+}
+
+.summary-card p {
+  color: white;
+  margin: 0;
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+.summary-actions {
+  text-align: center;
+}
+
+.comparison-empty {
+  text-align: center;
+  padding: 80px 20px;
+}
+
+/* Кнопки сравнения на карточках */
+.compare-btn {
+  position: absolute;
+  top: 15px;
+  left: 15px;
+  background: rgba(255, 255, 255, 0.9);
+  border: 2px solid #3f51b5;
+  color: #3f51b5;
+  padding: 8px 15px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  z-index: 2;
+  transition: all 0.3s;
+}
+
+.compare-btn:hover {
+  background: #3f51b5;
+  color: white;
+}
+
+.compare-btn.active {
+  background: #3f51b5;
+  color: white;
+}
+
+/* Планировщик поездок */
+.trip-planner {
+  margin: 40px 0;
+}
+
+.planner-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 40px;
+}
+
+.planner-header h2 {
+  color: #333;
+  margin: 0;
+}
+
+.planner-empty {
+  text-align: center;
+  padding: 80px 20px;
+  background: #f9f9f9;
+  border-radius: 15px;
+}
+
+.trips-list {
+  margin-bottom: 40px;
+}
+
+.trips-list h3 {
+  color: #333;
+  margin-bottom: 25px;
+}
+
+.trips-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 25px;
+}
+
+.trip-card {
+  background: white;
+  border-radius: 15px;
+  padding: 25px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.trip-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  border-color: #3f51b5;
+}
+
+.trip-card.active {
+  border-color: #3f51b5;
+  background: #f5f7ff;
+}
+
+.trip-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 20px;
+}
+
+.trip-header h4 {
+  color: #333;
+  margin: 0;
+  flex: 1;
+}
+
+.trip-date {
+  color: #666;
+  font-size: 0.9rem;
+  background: #f0f0f0;
+  padding: 5px 10px;
+  border-radius: 15px;
+}
+
+.trip-details {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.trip-detail {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.detail-label {
+  color: #3f51b5;
+  font-size: 1rem;
+}
+
+.trip-progress {
+  margin: 20px 0;
+}
+
+.progress-bar {
+  height: 8px;
+  background: #e0e0e0;
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 5px;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #4CAF50, #8BC34A);
+  border-radius: 4px;
+  transition: width 0.3s;
+}
+
+.progress-text {
+  color: #666;
+  font-size: 0.8rem;
+  text-align: right;
+  display: block;
+}
+
+.trip-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+}
+
+.btn-icon {
+  background: none;
+  border: none;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  transition: all 0.3s;
+}
+
+.btn-icon.edit-trip {
+  background: #e3f2fd;
+  color: #1976d2;
+}
+
+.btn-icon.edit-trip:hover {
+  background: #1976d2;
+  color: white;
+}
+
+.btn-icon.delete-trip {
+  background: #ffebee;
+  color: #f44336;
+}
+
+.btn-icon.delete-trip:hover {
+  background: #f44336;
+  color: white;
+}
+
+/* Текущая поездка */
+.current-trip {
+  background: white;
+  border-radius: 15px;
+  padding: 30px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  margin-top: 40px;
+}
+
+.trip-view-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+  padding-bottom: 20px;
+  border-bottom: 2px solid #f0f0f0;
+}
+
+.trip-overview {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+  margin-bottom: 40px;
+}
+
+.overview-card {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 20px;
+  background: #f9f9f9;
+  border-radius: 10px;
+}
+
+.overview-icon {
+  font-size: 2rem;
+  color: #3f51b5;
+}
+
+.overview-card h4 {
+  color: #333;
+  margin: 0 0 5px;
+  font-size: 0.9rem;
+}
+
+.overview-card p {
+  color: #666;
+  margin: 0;
+  font-weight: 500;
+}
+
+.trip-sections {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 30px;
+  margin-bottom: 40px;
+}
+
+.trip-section {
+  background: #f9f9f9;
+  padding: 25px;
+  border-radius: 10px;
+}
+
+.trip-section h4 {
+  color: #333;
+  margin-bottom: 20px;
+  padding-bottom: 15px;
+  border-bottom: 2px solid #eee;
+}
+
+.selected-tours {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.selected-tour {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 15px;
+  background: white;
+  border-radius: 8px;
+}
+
+.selected-tour img {
+  width: 60px;
+  height: 40px;
+  object-fit: cover;
+  border-radius: 5px;
+}
+
+.tour-info h5 {
+  margin: 0 0 5px;
+  color: #333;
+  font-size: 0.9rem;
+}
+
+.tour-info p {
+  margin: 0;
+  color: #ff4081;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.no-tours {
+  color: #999;
+  text-align: center;
+  padding: 30px 0;
+  font-style: italic;
+}
+
+/* Бюджет */
+.budget-breakdown {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+}
+
+.budget-meter {
+  margin-bottom: 25px;
+}
+
+.meter-bar {
+  height: 12px;
+  background: #e0e0e0;
+  border-radius: 6px;
+  overflow: hidden;
+  margin-bottom: 10px;
+}
+
+.meter-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #4CAF50, #8BC34A);
+  border-radius: 6px;
+  transition: width 0.3s;
+}
+
+.meter-labels {
+  display: flex;
+  justify-content: space-between;
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.budget-details {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.budget-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 0;
+  border-bottom: 1px solid #eee;
+}
+
+.budget-item.total {
+  border-top: 2px solid #ddd;
+  border-bottom: none;
+  padding-top: 15px;
+  margin-top: 10px;
+  font-weight: 600;
+  color: #333;
+}
+
+/* Чек-лист */
+.checklist {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.checklist-item {
+  display: flex;
+  align-items: center;
+}
+
+.checkbox {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  width: 100%;
+}
+
+.checkbox input {
+  display: none;
+}
+
+.checkmark {
+  width: 24px;
+  height: 24px;
+  border: 2px solid #ddd;
+  border-radius: 4px;
+  margin-right: 15px;
+  position: relative;
+  flex-shrink: 0;
+}
+
+.checkbox input:checked + .checkmark {
+  background: #4CAF50;
+  border-color: #4CAF50;
+}
+
+.checkbox input:checked + .checkmark::after {
+  content: '✓';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: white;
+  font-weight: bold;
+}
+
+.checklist-text {
+  color: #333;
+  flex: 1;
+}
+
+.checklist-text.completed {
+  text-decoration: line-through;
+  color: #999;
+}
+
+.add-checklist-item {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.add-checklist-item input {
+  flex: 1;
+  padding: 10px 15px;
+  border: 2px solid #ddd;
+  border-radius: 8px;
+  font-size: 0.9rem;
+}
+
+.trip-export {
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+  padding-top: 30px;
+  border-top: 2px solid #f0f0f0;
+}
+
+/* Виджет погоды */
+.weather-widget {
+  background: white;
+  border-radius: 15px;
+  padding: 25px;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+  margin: 20px 0;
+}
+
+.weather-widget.error {
+  background: #fff3e0;
+}
+
+.weather-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.weather-header h4 {
+  color: #333;
+  margin: 0;
+}
+
+.weather-unit-toggle {
+  background: #e3f2fd;
+  color: #1976d2;
+  border: none;
+  padding: 5px 15px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.weather-unit-toggle:hover {
+  background: #1976d2;
+  color: white;
+}
+
+.weather-main {
+  text-align: center;
+  margin-bottom: 25px;
+}
+
+.weather-icon-large {
+  font-size: 4rem;
+  margin-bottom: 10px;
+}
+
+.weather-temp {
+  font-size: 3rem;
+  font-weight: 700;
+  color: #333;
+  margin-bottom: 5px;
+}
+
+.weather-condition {
+  color: #666;
+  font-size: 1.1rem;
+}
+
+.weather-details {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 15px;
+  margin-bottom: 25px;
+  padding-top: 25px;
+  border-top: 2px solid #f0f0f0;
+}
+
+.weather-detail {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.detail-icon {
+  font-size: 1.2rem;
+  color: #3f51b5;
+}
+
+.detail-label {
+  color: #666;
+  font-size: 0.9rem;
+  flex: 1;
+}
+
+.detail-value {
+  color: #333;
+  font-weight: 600;
+}
+
+.weather-forecast {
+  padding-top: 25px;
+  border-top: 2px solid #f0f0f0;
+}
+
+.weather-forecast h5 {
+  color: #333;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.forecast-days {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 15px;
+}
+
+.forecast-day {
+  text-align: center;
+  padding: 15px;
+  background: #f9f9f9;
+  border-radius: 10px;
+}
+
+.forecast-date {
+  color: #666;
+  font-size: 0.9rem;
+  margin-bottom: 10px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.forecast-icon {
+  font-size: 2rem;
+  margin-bottom: 10px;
+}
+
+.forecast-temp {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+
+.temp-max {
+  color: #333;
+  font-weight: 600;
+}
+
+.temp-min {
+  color: #666;
+}
+
+.weather-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 20px;
+  border-top: 2px solid #f0f0f0;
+  margin-top: 25px;
+}
+
+.weather-updated {
+  color: #999;
+  font-size: 0.8rem;
+}
+
+.weather-refresh {
+  background: #f5f5f5;
+  border: none;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.weather-refresh:hover {
+  background: #e0e0e0;
+}
+
+/* Статистика пользователя */
+.user-stats-page {
+  margin: 40px 0;
+}
+
+.stats-header {
+  text-align: center;
+  margin-bottom: 50px;
+}
+
+.stats-header h1 {
+  color: #333;
+  margin-bottom: 15px;
+}
+
+.stats-header p {
+  color: #666;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.user-stats {
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.stats-overview {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 25px;
+  margin-bottom: 50px;
+}
+
+.stats-overview .overview-card {
+  background: white;
+  padding: 30px;
+  border-radius: 15px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+  text-align: center;
+  display: block;
+}
+
+.stats-overview .overview-icon {
+  font-size: 3rem;
+  margin-bottom: 15px;
+  display: block;
+}
+
+.stats-overview h3 {
+  color: #3f51b5;
+  font-size: 2.5rem;
+  margin-bottom: 10px;
+}
+
+.stats-overview p {
+  color: #666;
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+.stats-insights {
+  margin-bottom: 50px;
+}
+
+.stats-insights h3 {
+  color: #333;
+  margin-bottom: 30px;
+  text-align: center;
+}
+
+.insights-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 25px;
+}
+
+.insight-card {
+  background: white;
+  padding: 25px;
+  border-radius: 15px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+  display: flex;
+  gap: 20px;
+  align-items: flex-start;
+  border-left: 4px solid #3f51b5;
+}
+
+.insight-card.activity {
+  border-left-color: #4CAF50;
+}
+
+.insight-card.conversion {
+  border-left-color: #FF9800;
+}
+
+.insight-card.preferences {
+  border-left-color: #E91E63;
+}
+
+.insight-card.spending {
+  border-left-color: #9C27B0;
+}
+
+.insight-card.welcome {
+  border-left-color: #00BCD4;
+}
+
+.insight-card.tip {
+  border-left-color: #8BC34A;
+}
+
+.insight-icon {
+  font-size: 2rem;
+  flex-shrink: 0;
+}
+
+.insight-content h4 {
+  color: #333;
+  margin: 0 0 10px;
+  font-size: 1.1rem;
+}
+
+.insight-content p {
+  color: #666;
+  margin: 0;
+  line-height: 1.5;
+}
+
+.stats-actions {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  padding-top: 40px;
+  border-top: 2px solid #f0f0f0;
+}
+
+.stats-empty {
+  text-align: center;
+  padding: 80px 20px;
+  background: #f9f9f9;
+  border-radius: 15px;
+}
+
+/* Модальные окна */
+.trip-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 4000;
+  padding: 20px;
+}
+
+.trip-modal {
+  background: white;
+  border-radius: 20px;
+  width: 100%;
+  max-width: 600px;
+  max-height: 90vh;
+  overflow-y: auto;
+  padding: 30px;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+  padding-bottom: 20px;
+  border-bottom: 2px solid #f0f0f0;
+}
+
+.modal-header h3 {
+  color: #333;
+  margin: 0;
+}
+
+.close-modal {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: #666;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.close-modal:hover {
+  background: #f5f5f5;
+}
+
+.modal-form {
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+@media (max-width: 576px) {
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.form-group label {
+  color: #555;
+  font-weight: 500;
+  font-size: 0.9rem;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+  padding: 12px 15px;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: border-color 0.3s;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  border-color: #3f51b5;
+  outline: none;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 15px;
+  margin-top: 20px;
+  padding-top: 25px;
+  border-top: 2px solid #f0f0f0;
+}
+
+/* Анимации */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.tour-comparison,
+.trip-planner,
+.user-stats {
+  animation: fadeInUp 0.5s ease-out;
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+  .comparison-table-container {
+    margin: 0 -20px;
+    border-radius: 0;
+  }
+  
+  .summary-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .trips-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .trip-sections {
+    grid-template-columns: 1fr;
+  }
+  
+  .forecast-days {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .stats-overview {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .insights-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .stats-actions {
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 480px) {
+  .comparison-header,
+  .planner-header {
+    flex-direction: column;
+    gap: 20px;
+    align-items: stretch;
+  }
+  
+  .forecast-days {
+    grid-template-columns: 1fr;
+  }
+  
+  .stats-overview {
+    grid-template-columns: 1fr;
+  }
+  
+  .weather-details {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Темная тема */
+@media (prefers-color-scheme: dark) {
+  .tour-comparison,
+  .trip-planner,
+  .user-stats-page,
+  .weather-widget {
+    background: #2d2d2d;
+    color: #fff;
+  }
+  
+  .comparison-table th,
+  .comparison-table td {
+    border-color: #444;
+  }
+  
+  .comparison-category {
+    background: #3d3d3d;
+    color: #90caf9;
+  }
+  
+  .comparison-tour-header h4 {
+    color: #fff;
+  }
+  
+  .trip-card,
+  .current-trip,
+  .trip-section,
+  .selected-tour,
+  .budget-breakdown,
+  .checklist-item {
+    background: #3d3d3d;
+    color: #fff;
+  }
+  
+  .insight-card {
+    background: #3d3d3d;
+    color: #fff;
+  }
+  
+  .overview-card {
+    background: #3d3d3d;
+  }
+  
+  .trip-section h4,
+  .budget-item.total {
+    color: #fff;
+    border-color: #444;
+  }
+}

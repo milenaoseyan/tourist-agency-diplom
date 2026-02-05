@@ -20,6 +20,10 @@ import { ClickOutsideDirective } from './directives/click-outside.directive';
 import store from './store/store.js';
 import NotificationCenterComponent from './components/notification-center/notification-center.component.js';
 import FavoritesComponent from './components/favorites/favorites.component.js';
+import TourComparisonComponent from './components/tour-comparison/tour-comparison.component.js';
+import TripPlannerComponent from './components/trip-planner/trip-planner.component.js';
+import WeatherWidgetComponent from './components/weather-widget/weather-widget.component.js';
+import UserAnalyticsService from './services/user-analytics.service.js';
 
 @NgModule({
 declarations: [
@@ -87,7 +91,15 @@ handleStateChange(state) {
 }
 
 render() {
-    const hash = window.location.hash;
+const hash = window.location.hash;
+
+if (hash === '#/comparison') {
+    this.currentPage = 'comparison';
+} else if (hash === '#/trip-planner') {
+    this.currentPage = 'trip-planner';
+} else if (hash === '#/my-stats') {
+    this.currentPage = 'my-stats';
+}
         if (hash === '#/favorites') {
     this.currentPage = 'favorites';
     }
@@ -147,6 +159,124 @@ render() {
         default:
             return this.renderHomePage();
     }
+}
+
+async renderComparisonPage() {
+  const comparison = new TourComparisonComponent();
+  return `
+    ${this.header.render()}
+    ${this.mobileMenu.render()}
+    <main class="container">
+      ${await comparison.render()}
+    </main>
+    ${this.footer.render()}
+  `;
+}
+
+async renderTripPlannerPage() {
+  const tripPlanner = new TripPlannerComponent();
+  return `
+    ${this.header.render()}
+    ${this.mobileMenu.render()}
+    <main class="container">
+      ${await tripPlanner.render()}
+    </main>
+    ${this.footer.render()}
+  `;
+}
+
+async renderMyStatsPage() {
+  const user = this.authService.getCurrentUser();
+  let statsHTML = '';
+  
+  if (user) {
+    const insights = UserAnalyticsService.getUserInsights(user.id);
+    statsHTML = this.renderUserStats(insights);
+  } else {
+    statsHTML = `
+      <div class="stats-empty">
+        <div class="empty-icon">📊</div>
+        <h3>Статистика доступна только авторизованным пользователям</h3>
+        <a href="#/auth" class="btn btn-primary">Войти</a>
+      </div>
+    `;
+  }
+  
+  return `
+    ${this.header.render()}
+    ${this.mobileMenu.render()}
+    <main class="container">
+      <div class="user-stats-page">
+        <div class="stats-header">
+          <h1>📊 Моя статистика</h1>
+          <p>Анализ вашей активности и предпочтений</p>
+        </div>
+        ${statsHTML}
+      </div>
+    </main>
+    ${this.footer.render()}
+  `;
+}
+
+renderUserStats(insights) {
+  return `
+    <div class="user-stats">
+      <div class="stats-overview">
+        <div class="overview-card">
+          <div class="overview-icon">👁️</div>
+          <div>
+            <h3>${insights.stats.toursViewed.length}</h3>
+            <p>Туров просмотрено</p>
+          </div>
+        </div>
+        <div class="overview-card">
+          <div class="overview-icon">🎫</div>
+          <div>
+            <h3>${insights.stats.toursBooked.length}</h3>
+            <p>Туров забронировано</p>
+          </div>
+        </div>
+        <div class="overview-card">
+          <div class="overview-icon">💰</div>
+          <div>
+            <h3>${insights.stats.totalSpent.toLocaleString('ru-RU')} ₽</h3>
+            <p>Потрачено</p>
+          </div>
+        </div>
+        <div class="overview-card">
+          <div class="overview-icon">🎯</div>
+          <div>
+            <h3>${insights.recommendations.conversionRate}%</h3>
+            <p>Конверсия</p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="stats-insights">
+        <h3>📈 Инсайты</h3>
+        <div class="insights-grid">
+          ${insights.insights.map(insight => `
+            <div class="insight-card ${insight.type}">
+              <div class="insight-icon">${insight.icon}</div>
+              <div class="insight-content">
+                <h4>${insight.title}</h4>
+                <p>${insight.message}</p>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+      
+      <div class="stats-actions">
+        <button class="btn btn-primary" id="exportStats">
+          📥 Экспортировать мои данные
+        </button>
+        <button class="btn btn-secondary" id="clearStats">
+          🗑️ Очистить историю
+        </button>
+      </div>
+    </div>
+  `;
 }
 
     renderHomePage() {
@@ -580,6 +710,8 @@ async renderFavoritesPage() {
 }
 
 async afterRender() {
+    UserAnalyticsService.trackPageView(this.currentPage);
+    
     store.init();
     this.notificationCenter.afterRender();
     this.header.afterRender();
@@ -589,6 +721,9 @@ async afterRender() {
     this.addFavoriteButtons();
     this.trackPerformance();
 
+    if (this.currentPage === 'tour-detail' && this.currentTourId) {
+    this.initTourWeatherWidget();
+    }
     // Обработка кликов по категориям на главной
     if (this.currentPage === 'home') {
         document.querySelectorAll('.category-card').forEach(card => {
@@ -644,6 +779,14 @@ async afterRender() {
     window.addEventListener('hashchange', () => {
         this.rerender();
     });
+}
+
+initTourWeatherWidget() {
+const tour = this.tourService.getTourById(this.currentTourId);
+if (tour && tour.location) {
+    const location = tour.location.split(',')[0]; // Берем первый город
+    WeatherWidgetComponent.create(location, '.weather-widget-container');
+}
 }
 
 addFavoriteButtons() {
