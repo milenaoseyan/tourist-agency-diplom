@@ -140,3 +140,29 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 export default App;
+
+// Добавляем новый маршрут для Дня 11
+this.router.addRoute('#/day11', () => {
+  this.renderDay11();
+});
+
+// Обновляем маршрут по умолчанию для показа текущего дня
+const currentDay = localStorage.getItem('practice_day') || '11';
+this.router.addRoute('', () => {
+  this.router.navigate(`#/day${currentDay}`);
+});
+
+// Метод для рендеринга Дня 11
+renderDay11() {
+  const mainContent = document.getElementById('mainContent');
+  if (mainContent) {
+    import('./components/day11/day11.component.js')
+      .then(module => {
+        module.default.init('#mainContent');
+      })
+      .catch(error => {
+        console.error('Ошибка загрузки Day11Component:', error);
+        mainContent.innerHTML = '<p>Ошибка загрузки компонента</p>';
+      });
+  }
+} 
