@@ -166,3 +166,27 @@ renderDay11() {
       });
   }
 } 
+
+// Добавляем новые маршруты
+this.router.addRoute('#/day12', () => {
+  this.renderDay12();
+});
+
+this.router.addRoute('#/auth', () => {
+  this.renderAuth();
+});
+
+// Метод для рендеринга аутентификации
+renderAuth() {
+  const mainContent = document.getElementById('mainContent');
+  if (mainContent) {
+    import('./components/auth/auth.component.js')
+      .then(module => {
+        module.default.init('#mainContent');
+      })
+      .catch(error => {
+        console.error('Ошибка загрузки AuthComponent:', error);
+        mainContent.innerHTML = '<p>Ошибка загрузки компонента</p>';
+      });
+  }
+}

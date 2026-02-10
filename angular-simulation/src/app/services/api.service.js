@@ -211,3 +211,420 @@ class ApiService {
 }
 
 export default ApiService;
+
+/**
+ * @fileoverview Сервис для работы с API бэкенда
+ * @module services/api
+ */
+
+import NotificationCenterComponent from '../components/notification-center/notification-center.component.js';
+
+/**
+ * Класс для работы с API
+ * @class ApiService
+ */
+class ApiService {
+  constructor() {
+    this.baseURL = process.env.API_URL || 'http://localhost:5000/api/v1';
+    this.token = localStorage.getItem('auth_token');
+    this.refreshToken = localStorage.getItem('refresh_token');
+  }
+
+  /**
+   * Установка токена авторизации
+   * @param {string} token - JWT токен
+   * @param {string} refreshToken - Refresh токен
+   */
+  setAuthToken(token, refreshToken) {
+    this.token = token;
+    this.refreshToken = refreshToken;
+    localStorage.setItem('auth_token', token);
+    localStorage.setItem('refresh_token', refreshToken);
+  }
+
+  /**
+   * Очистка токенов авторизации
+   */
+  clearAuthToken() {
+    this.token = null;
+    this.refreshToken = null;
+    localStorage.removeItem('auth_token');
+    localStorage.removeItem('refresh_token');
+  }
+
+  /**
+   * Общий метод для запросов к API
+   * @param {string} endpoint - Конечная точка API
+   * @param {Object} options - Опции запроса
+   * @returns {Promise<any>} Результат запроса
+   */
+  async request(endpoint, options = {}) {
+    const url = `${this.baseURL}${endpoint}`;
+    
+    const defaultOptions = {
+      headers: {
+        'Content-Type': 'application/json',
+        ...(this.token && { 'Authorization': `Bearer ${this.token}` }),
+        ...options.headers
+      },
+      ...options
+    };
+
+    try {
+      const response = await fetch(url, defaultOptions);
+      
+      // Обработка 401 ошибки (просроченный токен)
+      if (response.status === 401 && this.refreshToken) {
+        try {
+          const newToken = await this.refreshAuthToken();
+          if (newToken) {
+            defaultOptions.headers.Authorization = `Bearer ${newToken}`;
+            const retryResponse = await fetch(url, defaultOptions);
+            return await this.handleResponse(retryResponse);
+          }
+        } catch (refreshError) {
+          console.error('Ошибка обновления токена:', refreshError);
+          this.clearAuthToken();
+          window.location.hash = '#/login';
+          throw new Error('Сессия истекла. Пожалуйста, войдите снова.');
+        }
+      }
+
+      return await this.handleResponse(response);
+      
+    } catch (error) {
+      console.error(`API ошибка (${endpoint}):`, error);
+      throw error;
+    }
+  }
+
+  /**
+   * Обработка ответа от API
+   * @param {Response} response - Ответ от fetch
+   * @returns {Promise<any>} Данные ответа
+   */
+  async handleResponse(response) {
+    const data = await response.json().catch(() => ({}));
+    
+    if (!response.ok) {
+      const error = new Error(data.message || `HTTP ${response.status}`);
+      error.status = response.status;
+      error.data = data;
+      throw error;
+    }
+
+    return data;
+  }
+
+  /**
+   * Обновление токена авторизации
+   * @returns {Promise<string|null>} Новый токен
+   */
+  async refreshAuthToken() {
+    try {
+      const response = await fetch(`${this.baseURL}/auth/refresh-token`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${this.refreshToken}`
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error('Не удалось обновить токен');
+      }
+
+      const data = await response.json();
+      this.setAuthToken(data.token, data.refreshToken);
+      return data.token;
+      
+    } catch (error) {
+      console.error('Ошибка обновления токена:', error);
+      this.clearAuthToken();
+      return null;
+    }
+  }
+
+  /**
+   * GET запрос
+   * @param {string} endpoint - Конечная точка API
+   * @param {Object} params - Параметры запроса
+   * @returns {Promise<any>} Результат запроса
+   */
+  async get(endpoint, params = {}) {
+    const queryString = new URLSearchParams(params).toString();
+    const url = queryString ? `${endpoint}?${queryString}` : endpoint;
+    
+    return this.request(url, {
+      method: 'GET'
+    });
+  }
+
+  /**
+   * POST запрос
+   * @param {string} endpoint - Конечная точка API
+   * @param {Object} data - Данные для отправки
+   * @returns {Promise<any>} Результат запроса
+   */
+  async post(endpoint, data = {}) {
+    return this.request(endpoint, {
+      method: 'POST',
+      body: JSON.stringify(data)
+    });
+  }
+
+  /**
+   * PUT запрос
+   * @param {string} endpoint - Конечная точка API
+   * @param {Object} data - Данные для обновления
+   * @returns {Promise<any>} Результат запроса
+   */
+  async put(endpoint, data = {}) {
+    return this.request(endpoint, {
+      method: 'PUT',
+      body: JSON.stringify(data)
+    });
+  }
+
+  /**
+   * PATCH запрос
+   * @param {string} endpoint - Конечная точка API
+   * @param {Object} data - Данные для частичного обновления
+   * @returns {Promise<any>} Результат запроса
+   */
+  async patch(endpoint, data = {}) {
+    return this.request(endpoint, {
+      method: 'PATCH',
+      body: JSON.stringify(data)
+    });
+  }
+
+  /**
+   * DELETE запрос
+   * @param {string} endpoint - Конечная точка API
+   * @returns {Promise<any>} Результат запроса
+   */
+  async delete(endpoint) {
+    return this.request(endpoint, {
+      method: 'DELETE'
+    });
+  }
+
+  /**
+   * Загрузка файла
+   * @param {string} endpoint - Конечная точка API
+   * @param {FormData} formData - Данные формы с файлом
+   * @returns {Promise<any>} Результат запроса
+   */
+  async upload(endpoint, formData) {
+    return this.request(endpoint, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${this.token}`
+      },
+      body: formData
+    });
+  }
+
+  // === Аутентификация ===
+  
+  /**
+   * Регистрация пользователя
+   * @param {Object} userData - Данные пользователя
+   * @returns {Promise<any>} Результат регистрации
+   */
+  async register(userData) {
+    const data = await this.post('/auth/register', userData);
+    if (data.token) {
+      this.setAuthToken(data.token, data.refreshToken);
+    }
+    return data;
+  }
+
+  /**
+   * Вход пользователя
+   * @param {Object} credentials - Данные для входа
+   * @returns {Promise<any>} Результат входа
+   */
+  async login(credentials) {
+    const data = await this.post('/auth/login', credentials);
+    if (data.token) {
+      this.setAuthToken(data.token, data.refreshToken);
+    }
+    return data;
+  }
+
+  /**
+   * Выход пользователя
+   * @returns {Promise<any>} Результат выхода
+   */
+  async logout() {
+    try {
+      await this.post('/auth/logout');
+    } finally {
+      this.clearAuthToken();
+    }
+  }
+
+  /**
+   * Получение профиля текущего пользователя
+   * @returns {Promise<any>} Профиль пользователя
+   */
+  async getProfile() {
+    return this.get('/users/me');
+  }
+
+  /**
+   * Обновление профиля пользователя
+   * @param {Object} userData - Новые данные пользователя
+   * @returns {Promise<any>} Обновленный профиль
+   */
+  async updateProfile(userData) {
+    return this.patch('/users/update-me', userData);
+  }
+
+  // === Туры ===
+  
+  /**
+   * Получение всех туров с фильтрацией
+   * @param {Object} filters - Фильтры для поиска
+   * @returns {Promise<any>} Список туров
+   */
+  async getTours(filters = {}) {
+    return this.get('/tours', filters);
+  }
+
+  /**
+   * Получение одного тура по ID
+   * @param {string} id - ID тура
+   * @returns {Promise<any>} Данные тура
+   */
+  async getTour(id) {
+    return this.get(`/tours/${id}`);
+  }
+
+  /**
+   * Получение топ-5 туров
+   * @returns {Promise<any>} Список популярных туров
+   */
+  async getTopTours() {
+    return this.get('/tours/top-5-tours');
+  }
+
+  /**
+   * Добавление тура в избранное
+   * @param {string} tourId - ID тура
+   * @returns {Promise<any>} Результат операции
+   */
+  async addToFavorites(tourId) {
+    return this.post(`/tours/${tourId}/favorite`);
+  }
+
+  /**
+   * Удаление тура из избранного
+   * @param {string} tourId - ID тура
+   * @returns {Promise<any>} Результат операции
+   */
+  async removeFromFavorites(tourId) {
+    return this.delete(`/tours/${tourId}/favorite`);
+  }
+
+  /**
+   * Получение избранных туров
+   * @returns {Promise<any>} Список избранных туров
+   */
+  async getFavoriteTours() {
+    return this.get('/tours/me/favorites');
+  }
+
+  // === Бронирования ===
+  
+  /**
+   * Создание бронирования
+   * @param {Object} bookingData - Данные бронирования
+   * @returns {Promise<any>} Результат бронирования
+   */
+  async createBooking(bookingData) {
+    return this.post('/bookings', bookingData);
+  }
+
+  /**
+   * Получение бронирований пользователя
+   * @returns {Promise<any>} Список бронирований
+   */
+  async getUserBookings() {
+    return this.get('/bookings/my-bookings');
+  }
+
+  /**
+   * Отмена бронирования
+   * @param {string} bookingId - ID бронирования
+   * @returns {Promise<any>} Результат отмены
+   */
+  async cancelBooking(bookingId) {
+    return this.patch(`/bookings/${bookingId}/cancel`);
+  }
+
+  // === Отзывы ===
+  
+  /**
+   * Создание отзыва
+   * @param {string} tourId - ID тура
+   * @param {Object} reviewData - Данные отзыва
+   * @returns {Promise<any>} Созданный отзыв
+   */
+  async createReview(tourId, reviewData) {
+    return this.post(`/tours/${tourId}/reviews`, reviewData);
+  }
+
+  /**
+   * Получение отзывов пользователя
+   * @returns {Promise<any>} Список отзывов
+   */
+  async getUserReviews() {
+    return this.get('/reviews/my-reviews');
+  }
+
+  /**
+   * Статистика API
+   * @returns {Object} Статистика использования
+   */
+  getStats() {
+    // Можно добавить сбор статистики запросов
+    return {
+      totalRequests: 0,
+      successfulRequests: 0,
+      failedRequests: 0
+    };
+  }
+
+  /**
+   * Проверка соединения с сервером
+   * @returns {Promise<boolean>} Доступен ли сервер
+   */
+  async checkConnection() {
+    try {
+      await fetch(`${this.baseURL}/health`, { timeout: 5000 });
+      return true;
+    } catch (error) {
+      console.warn('Сервер недоступен:', error);
+      return false;
+    }
+  }
+}
+
+// Создание синглтона
+const apiService = new ApiService();
+
+// Глобальный обработчик ошибок API
+window.addEventListener('unhandledrejection', (event) => {
+  if (event.reason?.status === 401) {
+    apiService.clearAuthToken();
+    NotificationCenterComponent.error('Сессия истекла. Пожалуйста, войдите снова.');
+    window.location.hash = '#/login';
+  } else if (event.reason?.status === 500) {
+    NotificationCenterComponent.error('Ошибка сервера. Пожалуйста, попробуйте позже.');
+  }
+});
+
+export default apiService;
