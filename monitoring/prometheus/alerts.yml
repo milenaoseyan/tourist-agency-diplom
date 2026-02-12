@@ -1,0 +1,128 @@
+groups:
+  - name: travelwave_alerts
+    interval: 30s
+    
+    rules:
+    # Backend alerts
+    - alert: BackendDown
+      expr: up{job="backend"} == 0
+      for: 1m
+      labels:
+        severity: critical
+        team: backend
+      annotations:
+        summary: "Backend is down"
+        description: "Backend has been down for more than 1 minute."
+        
+    - alert: HighErrorRate
+      expr: rate(http_requests_total{status=~"5.."}[5m]) > 0.1
+      for: 2m
+      labels:
+        severity: warning
+        team: backend
+      annotations:
+        summary: "High HTTP error rate"
+        description: "Error rate is {{ $value }} errors per second"
+        
+    - alert: SlowResponses
+      expr: histogram_quantile(0.95, rate(http_request_duration_seconds_bucket[5m])) > 1
+      for: 5m
+      labels:
+        severity: warning
+        team: backend
+      annotations:
+        summary: "Slow HTTP responses"
+        description: "95th percentile response time is {{ $value }}s"
+        
+    # Database alerts
+    - alert: MongoDBDown
+      expr: mongodb_up == 0
+      for: 1m
+      labels:
+        severity: critical
+        team: database
+      annotations:
+        summary: "MongoDB is down"
+        description: "MongoDB instance has been down for more than 1 minute."
+        
+    - alert: RedisDown
+      expr: redis_up == 0
+      for: 1m
+      labels:
+        severity: critical
+        team: database
+      annotations:
+        summary: "Redis is down"
+        description: "Redis instance has been down for more than 1 minute."
+        
+    - alert: HighDatabaseConnections
+      expr: mongodb_connections_current > 100
+      for: 5m
+      labels:
+        severity: warning
+        team: database
+      annotations:
+        summary: "High number of database connections"
+        description: "Current connections: {{ $value }}"
+        
+    # System alerts
+    - alert: HighCPUUsage
+      expr: 100 - (avg by(instance) (rate(node_cpu_seconds_total{mode="idle"}[5m])) * 100) > 80
+      for: 5m
+      labels:
+        severity: warning
+        team: infrastructure
+      annotations:
+        summary: "High CPU usage"
+        description: "CPU usage is {{ $value }}%"
+        
+    - alert: HighMemoryUsage
+      expr: (node_memory_MemTotal_bytes - node_memory_MemFree_bytes - node_memory_Buffers_bytes - node_memory_Cached_bytes) / node_memory_MemTotal_bytes * 100 > 85
+      for: 5m
+      labels:
+        severity: warning
+        team: infrastructure
+      annotations:
+        summary: "High memory usage"
+        description: "Memory usage is {{ $value }}%"
+        
+    - alert: DiskSpaceLow
+      expr: node_filesystem_avail_bytes{mountpoint="/"} / node_filesystem_size_bytes{mountpoint="/"} * 100 < 15
+      for: 5m
+      labels:
+        severity: critical
+        team: infrastructure
+      annotations:
+        summary: "Low disk space"
+        description: "Available disk space is {{ $value }}%"
+        
+    # Business metrics
+    - alert: HighFailedLogins
+      expr: rate(failed_login_attempts_total[5m]) > 10
+      for: 2m
+      labels:
+        severity: warning
+        team: security
+      annotations:
+        summary: "High number of failed login attempts"
+        description: "Failed login rate: {{ $value }} attempts/second"
+        
+    - alert: BookingSpike
+      expr: rate(bookings_created_total[5m]) > 5
+      for: 2m
+      labels:
+        severity: info
+        team: business
+      annotations:
+        summary: "Unusual booking activity"
+        description: "Booking creation rate: {{ $value }} bookings/second"
+        
+    - alert: PaymentFailures
+      expr: rate(payment_failures_total[5m]) > 0.5
+      for: 2m
+      labels:
+        severity: critical
+        team: payments
+      annotations:
+        summary: "High payment failure rate"
+        description: "Payment failure rate: {{ $value }} failures/second"

@@ -190,3 +190,26 @@ renderAuth() {
       });
   }
 }
+
+// Добавляем маршрут для Дня 14
+this.router.addRoute('#/day14', () => {
+  this.renderDay14();
+});
+
+// Метод для рендеринга Дня 14
+renderDay14() {
+  const mainContent = document.getElementById('mainContent');
+  if (mainContent) {
+    import('./components/day14/day14.component.js')
+      .then(module => {
+        module.default.init('#mainContent');
+      })
+      .catch(error => {
+        console.error('Ошибка загрузки Day14Component:', error);
+        mainContent.innerHTML = '<p>Ошибка загрузки компонента</p>';
+      });
+  }
+}
+
+// Обновляем текущий день
+const currentDay = localStorage.getItem('practice_day') || '14';
